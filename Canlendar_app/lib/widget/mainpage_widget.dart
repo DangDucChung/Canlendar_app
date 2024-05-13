@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/widget/calendar_widget.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class MainPage extends StatelessWidget {
-  String username = "John Doe"; // Thay "John Doe" bằng tên người dùng thực tế
+  
 final String userId;
-
-  MainPage({required this.userId});
+final String? useremail;
+  MainPage({required this.userId, required this.useremail});
   Widget build(BuildContext context) => Scaffold(
+    
         appBar: AppBar(
-          backgroundColor: Colors.black,
+          
+          backgroundColor: Color.fromARGB(255, 0, 0, 0),
           title: const Text("Calendar Events App",
               style: TextStyle(color: Colors.white)),
           centerTitle: true,
+          leading: SizedBox.shrink(),
           actions: [
             IconButton(
               icon: Icon(Icons.account_circle), // Icon người dùng
@@ -25,7 +29,7 @@ final String userId;
                     return AlertDialog(
                         title: Text("User Profile"),
                         content: Text(
-                            "Username: $username"), // Hiển thị tên người dùng
+                            "Username: $useremail"), // Hiển thị tên người dùng
                         actions: [
                           Row(
                             children: [
@@ -41,8 +45,12 @@ final String userId;
                                   // Thực hiện chức năng đăng xuất ở đây
                                   // Ví dụ:
                                   // Đặt biến username về giá trị mặc định
-
-                                  Navigator.pop(context); // Đóng hộp thoại
+                                  FirebaseAuth.instance.signOut();
+                                
+                                   Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyApp()),
+                  );
                                 },
                                 child: Text("Logout"),
                               ),

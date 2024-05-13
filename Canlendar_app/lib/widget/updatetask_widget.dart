@@ -3,15 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddTask extends StatefulWidget {
-  @override
-  _AddTask createState() => _AddTask();
+class UpdateTask extends StatefulWidget {
   final String userId;
+  final String title;
+  final String note;
+  final DateTime startTime;
+  final DateTime endTime;
+  final int color;
+  final DateTime date;
+  final String documentId;
+  UpdateTask({
+    required this.userId,
+    required this.title,
+    required this.note,
+    required this.startTime,
+    required this.endTime,
+    required this.color,
+    required this.date,
+    required this.documentId,
+  });
 
-  AddTask({required this.userId});
+  @override
+  _UpdateTaskState createState() => _UpdateTaskState();
 }
 
-class _AddTask extends State<AddTask> {
+class _UpdateTaskState extends State<UpdateTask> {
   late TextEditingController _titleController;
   late TextEditingController _noteController;
   late DateTime _selectedDate;
@@ -34,12 +50,12 @@ class _AddTask extends State<AddTask> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _noteController = TextEditingController();
-    _selectedDate = DateTime.now();
-    _selectedStartTime = TimeOfDay.now();
-    _selectedEndTime = TimeOfDay.now();
-    _selectedColor = _colors[0];
+    _titleController = TextEditingController(text: widget.title);
+    _noteController = TextEditingController(text: widget.note);
+    _selectedDate = widget.date;
+    _selectedStartTime = TimeOfDay.fromDateTime(widget.startTime);
+    _selectedEndTime = TimeOfDay.fromDateTime(widget.endTime);
+    _selectedColor = Color(widget.color);
   }
 
   @override
@@ -53,7 +69,7 @@ class _AddTask extends State<AddTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Task'),
+        title: Text('Update Task'),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -102,20 +118,16 @@ class _AddTask extends State<AddTask> {
                 style: TextStyle(fontSize: 18),
               ),
               TextFormField(
-                readOnly:
-                    true, // Đặt thuộc tính readOnly để ngăn người dùng chỉnh sửa trực tiếp
+                readOnly: true,
                 controller: TextEditingController(
-                  text: DateFormat('yyyy-MM-dd')
-                      .format(_selectedDate), // Định dạng ngày tháng năm
+                  text: DateFormat('yyyy-MM-dd').format(_selectedDate),
                 ),
                 onTap: () {
-                  _selectDate(
-                      context); // Gọi hàm _selectEndTime khi người dùng chạm vào TextField
+                  _selectDate(context);
                 },
                 decoration: InputDecoration(
-                  suffixIcon: Icon(Icons
-                      .calendar_today), // Sử dụng prefixIcon để thêm biểu tượng
-                  hintText: 'Select date', // Thêm gợi ý khi không có giá trị
+                  suffixIcon: Icon(Icons.calendar_today),
+                  hintText: 'Select date',
                 ),
               ),
               Text(
@@ -123,20 +135,16 @@ class _AddTask extends State<AddTask> {
                 style: TextStyle(fontSize: 18),
               ),
               TextFormField(
-                readOnly:
-                    true, // Đặt thuộc tính readOnly để ngăn người dùng chỉnh sửa trực tiếp
+                readOnly: true,
                 controller: TextEditingController(
-                  text: _selectedStartTime.format(
-                      context), // Sử dụng phương thức format để chuyển đổi TimeOfDay thành chuỗi
+                  text: _selectedStartTime.format(context),
                 ),
                 onTap: () {
-                  _selectStartTime(
-                      context); // Gọi hàm _selectEndTime khi người dùng chạm vào TextField
+                  _selectStartTime(context);
                 },
                 decoration: InputDecoration(
-                  suffixIcon: Icon(Icons
-                      .access_time), // Sử dụng prefixIcon để thêm biểu tượng
-                  hintText: 'Select time', // Thêm gợi ý khi không có giá trị
+                  suffixIcon: Icon(Icons.access_time),
+                  hintText: 'Select time',
                 ),
               ),
               Text(
@@ -144,20 +152,16 @@ class _AddTask extends State<AddTask> {
                 style: TextStyle(fontSize: 18),
               ),
               TextFormField(
-                readOnly:
-                    true, // Đặt thuộc tính readOnly để ngăn người dùng chỉnh sửa trực tiếp
+                readOnly: true,
                 controller: TextEditingController(
-                  text: _selectedEndTime.format(
-                      context), // Sử dụng phương thức format để chuyển đổi TimeOfDay thành chuỗi
+                  text: _selectedEndTime.format(context),
                 ),
                 onTap: () {
-                  _selectEndTime(
-                      context); // Gọi hàm _selectEndTime khi người dùng chạm vào TextField
+                  _selectEndTime(context);
                 },
                 decoration: InputDecoration(
-                  suffixIcon: Icon(Icons
-                      .access_time), // Sử dụng prefixIcon để thêm biểu tượng
-                  hintText: 'Select time', // Thêm gợi ý khi không có giá trị
+                  suffixIcon: Icon(Icons.access_time),
+                  hintText: 'Select time',
                 ),
               ),
               Text(
@@ -165,25 +169,6 @@ class _AddTask extends State<AddTask> {
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 10),
-              DropdownButton<Color>(
-                value: _selectedColor,
-                onChanged: (Color? newValue) {
-                  setState(() {
-                    _selectedColor = newValue!;
-                  });
-                  print(_selectedColor);
-                },
-                items: _colors.map<DropdownMenuItem<Color>>((Color color) {
-                  return DropdownMenuItem<Color>(
-                    value: color,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      color: color,
-                    ),
-                  );
-                }).toList(),
-              ),
             ],
           ),
         ),
@@ -195,7 +180,7 @@ class _AddTask extends State<AddTask> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now(),
+       firstDate: DateTime(1900), // Bất kỳ ngày trong quá khứ nào
       lastDate: DateTime(2100),
     );
     if (pickedDate != null) {
@@ -230,12 +215,10 @@ class _AddTask extends State<AddTask> {
   }
 
   void _saveReminder(BuildContext context) async {
-    // Lưu thông tin nhắc nhở ở đây
     final id = DateTime.now().microsecond.toString();
     String title = _titleController.text;
     String note = _noteController.text;
-
-    // Lấy ngày từ _selectedDate
+    String document = widget.documentId;
     DateTime Date = DateTime(
       _selectedDate.year,
       _selectedDate.month,
@@ -258,12 +241,10 @@ class _AddTask extends State<AddTask> {
     );
     Color color = _selectedColor;
     print(
-        'title: $title, note: $note,Date: $Date, startTime:$startTime,endTime:$endTime, color: $color');
-    // Sau khi lưu xong, quay trở lại màn hình trước đó
-    // Lưu dữ liệu vào Firebase Database
+        'title: $title, note: $note, Date: $Date, startTime: $startTime, endTime: $endTime, color: $color,');
+    print(document);
     try {
-      // Sử dụng phương thức push() để tạo một nút mới với một ID tự động
-      await _firestore.collection(widget.userId).add({
+      await _firestore.collection(widget.userId).doc(widget.documentId).update({
         'title': title,
         'date': Date,
         'note': note,
@@ -271,10 +252,10 @@ class _AddTask extends State<AddTask> {
         'endTime': endTime,
         'color': color.value,
       });
-      
-      Navigator.pop(context, true);
     } catch (error) {
-      print('lỗi: $error');
+      print('Error: $error');
     }
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 }

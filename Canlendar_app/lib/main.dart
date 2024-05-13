@@ -38,7 +38,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -82,10 +82,12 @@ class LoginScreen extends StatelessWidget {
                     password: password,
                   );
                    String userId = userCredential.user!.uid;
+                    String? useremail = userCredential.user!.email;
                   // Login successful
+                    print('email: $useremail');
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MainPage(userId: userId)),
+                    MaterialPageRoute(builder: (context) => MainPage(userId: userId,useremail:useremail)),
                   );
                 } catch (e) {
                   print('Login: $e');
@@ -167,13 +169,16 @@ class RegisterScreen extends StatelessWidget {
                     password: password,
                   );
                   String userId = userCredential.user!.uid;
+                   String? useremail = userCredential.user!.email;
                   print('ID: $userId');
+                  
                   // Đăng ký thành công, bạn có thể xử lý tiếp theo ở đây
 
                   // Sau khi đăng ký thành công, bạn có thể chuyển hướng người dùng đến màn hình tiếp theo, ví dụ:
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MainPage(userId: userId)),
+                    MaterialPageRoute(builder: (context) => MainPage(userId: userId,useremail:useremail)),
+                    
                   );
                 } catch (e) {
                   // Xử lý lỗi khi đăng ký không thành công
